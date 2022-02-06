@@ -22,7 +22,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.example.admin.exceptions.DuplicatedException;
 import com.example.admin.exceptions.NotFoundException;
 import com.example.admin.model.Admin;
 import com.example.admin.service.AdminService;
@@ -45,7 +48,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 	
 	@PostConstruct
-	public void init() {
+	public void init() throws DuplicatedException {
 		
         
 		List<Admin>  currentAdminList= new ArrayList<Admin>();
@@ -65,6 +68,8 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	    
 	}
+
+
 
 	@Bean
 	public DaoAuthenticationProvider autProvider()
@@ -87,11 +92,12 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				"accept-encoding",
 				"authorization",
 				"content-type",
+				"Access-Control-Allow-Origin",
 				"dnt",
 				"origin",
 				"user-agent",
 				"x-csrftoken",
-				"x-requested-with"));
+				"x-requested-with","Access-Control-Allow-Headers", "Accept", "X-Requested-With", "remember-me"));
 		// setAllowCredentials(true) is important, otherwise:
 		// The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'.
 		configuration.setAllowCredentials(true);
@@ -99,7 +105,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		// will fail with 403 Invalid CORS request
 		configuration.setAllowedHeaders(ImmutableList.of("Authorization", "Cache-Control", "Content-Type"));
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
 
@@ -116,6 +122,10 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers(HttpMethod.GET,"/admin/username/{username}").permitAll()			//admin par username
 			.antMatchers(HttpMethod.POST,"/admin/add").permitAll()			//creer les admins
 			.antMatchers(HttpMethod.GET,"/admin/agent/all").permitAll()			//creer les admins
+			
+			.antMatchers(HttpMethod.GET,"/admin/adminid/{id}").permitAll()			//creer les admins
+			.antMatchers(HttpMethod.PUT,"/admin/update/{id}").permitAll()			//creer les admins
+			.antMatchers(HttpMethod.DELETE,"/admin/delete/{id}").permitAll()			//creer les admins
 
 
 			.and()

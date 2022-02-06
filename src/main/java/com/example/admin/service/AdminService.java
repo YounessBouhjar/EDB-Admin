@@ -2,6 +2,7 @@ package com.example.admin.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.admin.exceptions.DuplicatedException;
 import com.example.admin.exceptions.NotFoundException;
 import com.example.admin.model.Admin;
 import com.example.admin.repository.AdminRepository;
@@ -25,10 +27,7 @@ public class AdminService {
 	
 	public Admin getByEmail(String email)
 	{
-		Admin admin = rep.findByEmail(email)
-				.orElseThrow(() -> new NotFoundException("Aucun administrateur avec le username "+email+" trouvé"));
-
-		
+		Admin admin = rep.findByEmail(email);		
 		return admin;
 	
 	}
@@ -46,13 +45,47 @@ public class AdminService {
 	}
 	
 	
-	public void addAdmin(Admin admin)
+	public void addAdmin(Admin admin) throws DuplicatedException
 	{
-		
-		admin.setPassword(new BCryptPasswordEncoder().encode(admin.getPassword()));				
+		if(rep.findByEmail(admin.getEmail()) != null) throw new DuplicatedException(" Admin existe deja");
+
+		admin.setPassword(new BCryptPasswordEncoder().encode(admin.getPassword()));		
+		admin.setRole("Admin");
+
 		rep.save(admin);
 		
 	}
+	
+    
+    public Admin getAdminById(Long id){
+        return  rep.findAdminById(id);
+    }
+    
+    
+    //delete agent
+    public Long deleteAdmin(Long id) throws NotFoundException {
+        Admin adminFromDB = rep.findAdminById(id);
+        if (adminFromDB == null)
+            throw new NotFoundException("aucun Admin");
+        rep.delete(adminFromDB);
+        return id;
+    }
+
+
+    
+    public Admin updateAgent(Long id,Admin admin) throws NotFoundException, DuplicatedException
+	{
+		Admin updated = rep.findById(id).orElseThrow(() -> new NotFoundException("Aucun admin avec l'id "+id+" trouvé"));
+		
+		if(rep.findByEmail(admin.getEmail()) != null) throw new DuplicatedException(" Admin existe deja");
+
+		return rep.save(updated);
+
+	}
+	
+	
+	
+	
 
 
 }

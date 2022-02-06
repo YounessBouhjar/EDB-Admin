@@ -16,10 +16,9 @@ import com.example.admin.beans.ClientBean;
 import com.example.admin.beans.CompteBean;
 import com.example.admin.beans.NotificationBean;
 import com.example.admin.beans.TransfertBean;
+import com.example.admin.exceptions.DuplicatedException;
 import com.example.admin.model.Admin;
 import com.example.admin.service.AdminService;
-
-
 import com.example.admin.proxies.MicroserviceAgentProxy;
 import com.example.admin.proxies.MicroserviceBeneficiaireProxy;
 import com.example.admin.proxies.MicroserviceClientProxy;
@@ -79,7 +78,7 @@ public class AdminController {
 			
 			@PostMapping("/add")
 			@ResponseStatus(HttpStatus.CREATED)
-			public void addAdmin(@RequestBody Admin admin)
+			public void addAdmin(@RequestBody Admin admin) throws DuplicatedException
 			{
 				service.addAdmin(admin);
 			}
@@ -247,4 +246,21 @@ public class AdminController {
 			    public void sendSms(@Valid @RequestBody NotificationBean smsRequest) {
 
 			    }
+				@GetMapping("/adminid/{id}")
+				public ResponseEntity<Admin> getAdminByID (@PathVariable("id") Long id) {
+					Admin admin=service.getAdminById(id);
+				    return new ResponseEntity<Admin>(admin,HttpStatus.OK);
+				}
+				
+				@PutMapping("/update/{id}")
+				public ResponseEntity<Admin> updateAdmin(@PathVariable Long id ,@RequestBody Admin admin) throws Exception {
+					Admin updateAdmin = service.updateAgent(id,admin);
+				    return new ResponseEntity<Admin>(updateAdmin, HttpStatus.OK);
+				}
+				
+				@DeleteMapping("/delete/{id}")
+				public ResponseEntity<Admin> deleteAdmin(@PathVariable("id") Long id) throws Exception{
+					service.deleteAdmin(id);
+				    return new ResponseEntity<Admin>(HttpStatus.OK);
+				}
 }

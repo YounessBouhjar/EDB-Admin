@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.admin.model.Admin;
 
 public interface AdminRepository extends JpaRepository<Admin,Long>{
-	Optional<Admin> findByEmail(String email);
+	Admin findByEmail(String email);
+	Admin findAdminById(Long id);
 }
