@@ -17,7 +17,7 @@ import com.example.admin.repository.AdminRepository;
 
 @Service
 public class AdminService {
-	
+
 	@Autowired
 	AdminRepository rep;
 		
@@ -27,7 +27,10 @@ public class AdminService {
 	{
 		Admin admin = rep.findByEmail(email)
 				.orElseThrow(() -> new NotFoundException("Aucun administrateur avec le username "+email+" trouvé"));
+
+		
 		return admin;
+	
 	}
 	
 	

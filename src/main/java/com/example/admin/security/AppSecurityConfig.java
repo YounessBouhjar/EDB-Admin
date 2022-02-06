@@ -112,11 +112,11 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 			.authorizeRequests()
 			//ADMIN
-			.antMatchers(HttpMethod.GET,"/admins").permitAll()		//afficher les admins
+			.antMatchers(HttpMethod.GET,"/admin/all").permitAll()		//afficher les admins
 			.antMatchers(HttpMethod.GET,"/admin/username/{username}").permitAll()			//admin par username
-			.antMatchers(HttpMethod.POST,"/admins").permitAll()			//creer les admins
-			.antMatchers(HttpMethod.PUT,"/admin/{username}").permitAll()		//modifier un admin
-		
+			.antMatchers(HttpMethod.POST,"/admin/add").permitAll()			//creer les admins
+			.antMatchers(HttpMethod.GET,"/admin/agent/all").permitAll()			//creer les admins
+
 
 			.and()
 			.httpBasic()

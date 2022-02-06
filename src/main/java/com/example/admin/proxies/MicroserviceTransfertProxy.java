@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.admin.beans.TransfertBean;
 
-
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-@FeignClient(name = "transfert-service",url = "localhost:8084/transfert")
+@FeignClient(name = "transfert-service")
 public interface MicroserviceTransfertProxy{
-	@GetMapping("/alltransferts")
+	@GetMapping("/transfert/alltransferts")
      ResponseEntity<List<TransfertBean>> getAllTransferts ();
     
 	@GetMapping("/all/client/{idClient}")
@@ -36,7 +36,7 @@ public interface MicroserviceTransfertProxy{
 //     ResponseEntity<List<TransfertBean>> getTransCrit (@PathVariable("idAgent") Long idAgent,@PathVariable("idClient") Long idClient,@PathVariable("pi") String pi,
 //    		@PathVariable("numGsm") String numGsm,@PathVariable("codeTransfert") String codeTransfert,@PathVariable("status") String status);
 //    
-    @PostMapping("/TranSearch")
+    @PostMapping("/transfert/tranSearch")
     public ResponseEntity<List<TransfertBean>> getTransCrit (    		
     		@RequestParam(required = false) Long idAgent,
     		@RequestParam(required = false) Long idClient,
@@ -45,12 +45,24 @@ public interface MicroserviceTransfertProxy{
     		@RequestParam(required = false) String codeTransfert,
     		@RequestParam(required = false) String status);
 
-    @GetMapping("/transferts/export/excel")
-    public ResponseEntity<List<TransfertBean>> exportToExcel(HttpServletResponse response,    		
-    		@RequestParam(required = false) Long idAgent,
-    		@RequestParam(required = false) Long idClient,
-    		@RequestParam(required = false) String pi,
-    		@RequestParam(required = false) String numGsm,
-    		@RequestParam(required = false) String codeTransfert,
-    		@RequestParam(required = false) String status);
+//    @GetMapping("/transferts/export/excel")
+//    public ResponseEntity<List<TransfertBean>> exportToExcel(HttpServletResponse response,    		
+//    		@RequestParam(required = false) Long idAgent,
+//    		@RequestParam(required = false) Long idClient,
+//    		@RequestParam(required = false) String pi,
+//    		@RequestParam(required = false) String numGsm,
+//    		@RequestParam(required = false) String codeTransfert,
+//    		@RequestParam(required = false) String status);
+
+    @GetMapping("/transfert/find/{codetransfert}")
+	public ResponseEntity<TransfertBean> getTransfertByCodeTransfert(@PathVariable("codetransfert") String codeTransfert);
+    
+//    @PutMapping("/transfert/status/{codeTransfert}")
+//    public ResponseEntity<TransfertBean> restituerTransfert(@PathVariable("codeTransfert") String codeTransfert);
+    
+    @PutMapping("/transfert/status/{codeTransfert}")
+	public ResponseEntity<TransfertBean> updateTransfert(@PathVariable("codeTransfert") String codeTransfert,@RequestParam(required = true) String status,@RequestParam(required = true) String motif);
+	
+    @PostMapping("/transfert/add")
+    public ResponseEntity<TransfertBean> addtransfert(@RequestBody TransfertBean transfert);
 }

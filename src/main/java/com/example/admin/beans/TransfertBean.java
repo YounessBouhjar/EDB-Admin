@@ -19,6 +19,12 @@ public class TransfertBean {
     private Long idCompte;
     private String status;
     private String codeTransfert;
+    private String dateTransfert;
     private float montant;
     private int nombreJours;
+    private String motif;
+    private String motifTransfert;
+    private String nomBenef;
+    private String prenomBenef;
+
 }

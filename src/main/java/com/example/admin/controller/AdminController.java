@@ -3,6 +3,7 @@ package com.example.admin.controller;
 import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -10,18 +11,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.admin.beans.AgentBean;
+import com.example.admin.beans.BeneficiaireBean;
 import com.example.admin.beans.ClientBean;
+import com.example.admin.beans.CompteBean;
+import com.example.admin.beans.NotificationBean;
 import com.example.admin.beans.TransfertBean;
 import com.example.admin.model.Admin;
 import com.example.admin.service.AdminService;
 
 
 import com.example.admin.proxies.MicroserviceAgentProxy;
+import com.example.admin.proxies.MicroserviceBeneficiaireProxy;
 import com.example.admin.proxies.MicroserviceClientProxy;
+import com.example.admin.proxies.MicroserviceCompteProxy;
+import com.example.admin.proxies.MicroserviceNotificationProxy;
 import com.example.admin.proxies.MicroserviceTransfertProxy;
 @CrossOrigin(origins = "http://localhost:4200")
 
 @RestController
+@RequestMapping("/admin")
+
 public class AdminController {
 	@Autowired
 	MicroserviceAgentProxy microserviceAgentProxy;
@@ -29,7 +38,12 @@ public class AdminController {
 	MicroserviceTransfertProxy microserviceTransfertProxy;
 	@Autowired
 	MicroserviceClientProxy microserviceClientProxy;
-	
+	@Autowired
+	MicroserviceBeneficiaireProxy microserviceBeneficiaireProxy;
+	@Autowired
+	MicroserviceCompteProxy microserviceCompteProxy;
+	@Autowired
+	MicroserviceNotificationProxy microserviceNotificationProxy;
 	AdminService service;
 	
 	@Autowired
@@ -47,7 +61,7 @@ public class AdminController {
 			
 			}
 			
-			@GetMapping("/admins")
+			@GetMapping("/all")
 			@ResponseStatus(HttpStatus.OK)
 			public List<Admin> getAdmins()
 			{	
@@ -55,7 +69,7 @@ public class AdminController {
 			}
 			
 			
-			@GetMapping("/admin/username/{username}")
+			@GetMapping("/username/{username}")
 			@ResponseStatus(HttpStatus.OK)
 			public Admin getByUsername(@PathVariable(name="username") String username)
 			{
@@ -63,7 +77,7 @@ public class AdminController {
 			}
 		//POST
 			
-			@PostMapping("/admins")
+			@PostMapping("/add")
 			@ResponseStatus(HttpStatus.CREATED)
 			public void addAdmin(@RequestBody Admin admin)
 			{
@@ -79,7 +93,7 @@ public class AdminController {
 		    ResponseEntity<AgentBean> getAgentByEmail (@PathVariable("email") String email){
 		        return microserviceAgentProxy.getAgentByEmail(email);
 		    }
-			@GetMapping("/agentid/{id}")
+			@GetMapping("/agent/agentid/{id}")
 		    ResponseEntity<AgentBean> getAgentById (@PathVariable("id") Long id){
 		        return microserviceAgentProxy.getAgentById(id);
 		    }
@@ -91,14 +105,14 @@ public class AdminController {
 		    ResponseEntity<AgentBean> addAgent(@RequestBody AgentBean agent){
 		        return microserviceAgentProxy.addAgent(agent);
 		    }
-			@DeleteMapping("agent/delete/{id}")
+			@DeleteMapping("/agent/delete/{id}")
 		    public ResponseEntity<AgentBean> deleteAgent(@PathVariable("id") Long id){
 		        return microserviceAgentProxy.deleteAgent(id);
 		    }
 			
 	
 
-			@GetMapping("/alltransferts")
+			@GetMapping("/transfert/alltransferts")
 		     ResponseEntity<List<TransfertBean>> getAllTransferts () {
 		        return microserviceTransfertProxy.getAllTransferts();
 		    }
@@ -126,13 +140,13 @@ public class AdminController {
 				 return microserviceTransfertProxy.updateStatus(id, status);
 			 }
 			 
-			 @GetMapping("client/all")
+			 @GetMapping("/client/all")
 			    public ResponseEntity<List<ClientBean>> getAllClients (){
 				  	return microserviceClientProxy.getAllClients();
 
 			 } 
 		    
-			 @PutMapping("client/updateClient/{clientId}")
+			 @PutMapping("/client/updateClient/{clientId}")
 			    public ResponseEntity<ClientBean> updateClient(@PathVariable("clientId")Long clientId,@RequestBody ClientBean client){
 				 return microserviceClientProxy.updateClient(clientId, client);
 			 }
@@ -142,7 +156,7 @@ public class AdminController {
 //			    		@PathVariable("numGsm") String numGsm,@PathVariable("codeTransfert") String codeTransfert,@PathVariable("status") String status){
 //				 return microserviceTransfertProxy.getTransCrit(idAgent, idClient, pi, numGsm, codeTransfert, status);
 //			 }
-			 @PostMapping("/TranSearch")
+			 @PostMapping("/transfert/tranSearch")
 			    public ResponseEntity<List<TransfertBean>> getTransCrit (    		
 			    		@RequestParam(required = false) Long idAgent,
 			    		@RequestParam(required = false) Long idClient,
@@ -152,14 +166,85 @@ public class AdminController {
 			    		@RequestParam(required = false) String status){
 			    return microserviceTransfertProxy.getTransCrit(idAgent, idClient, pi, numGsm, codeTransfert, status);
 			 }
-			 @GetMapping("/transferts/export/excel")
-			    public ResponseEntity<List<TransfertBean>> exportToExcel(HttpServletResponse response,    		
-			    		@RequestParam(required = false) Long idAgent,
-			    		@RequestParam(required = false) Long idClient,
-			    		@RequestParam(required = false) String pi,
-			    		@RequestParam(required = false) String numGsm,
-			    		@RequestParam(required = false) String codeTransfert,
-			    		@RequestParam(required = false) String status) {
-			    return microserviceTransfertProxy.exportToExcel(response, idAgent, idClient, pi, numGsm, codeTransfert, status);
+//			 @GetMapping("/transferts/export/excel")
+//			    public ResponseEntity<List<TransfertBean>> exportToExcel(HttpServletResponse response,    		
+//			    		@RequestParam(required = false) Long idAgent,
+//			    		@RequestParam(required = false) Long idClient,
+//			    		@RequestParam(required = false) String pi,
+//			    		@RequestParam(required = false) String numGsm,
+//			    		@RequestParam(required = false) String codeTransfert,
+//			    		@RequestParam(required = false) String status) {
+//			    return microserviceTransfertProxy.exportToExcel(response, idAgent, idClient, pi, numGsm, codeTransfert, status);
+//			    }
+			 
+			 @GetMapping("/transfert/find/{codetransfert}")
+				public ResponseEntity<TransfertBean> getTransfertByCodeTransfert(@PathVariable("codetransfert") String codeTransfert){
+				 return microserviceTransfertProxy.getTransfertByCodeTransfert(codeTransfert);
+			 }
+			 
+			 @GetMapping("/client/findid/{id}")
+			    public ResponseEntity<ClientBean> findClientById(@PathVariable("id") Long id){
+				 return microserviceClientProxy.findClientById(id);
+			 }
+			 @GetMapping("/beneficiaire/findid/{id}")
+			    public ResponseEntity<BeneficiaireBean> getBeneficiaire (@PathVariable("id") Long id){
+			 return microserviceBeneficiaireProxy.getBeneficiaire(id);
+			 }
+			    
+//			 @PutMapping("/transfert/status/{codeTransfert}")
+//			    public ResponseEntity<TransfertBean> restituerTransfert(@PathVariable("codeTransfert") String codeTransfert){
+//					return microserviceTransfertProxy.restituerTransfert(codeTransfert);
+//				}	   
+			 
+			 @PutMapping("/transfert/status/{codeTransfert}")
+				public ResponseEntity<TransfertBean> updateTransfert(@PathVariable("codeTransfert") String codeTransfert,@RequestParam(required = true) String status,@RequestParam(required = true) String motif){
+			 return  microserviceTransfertProxy.updateTransfert(codeTransfert, status, motif);
+			 }
+		    @PostMapping("/transfert/add")
+		    public ResponseEntity<TransfertBean> addtransfert(@RequestBody TransfertBean transfert){
+		    	return microserviceTransfertProxy.addtransfert(transfert);
+		    }
+			    
+			 @GetMapping("/client/findgsm/{gsm}")
+			    public ResponseEntity<ClientBean> findClientByGSM(@PathVariable("gsm") String gsm){
+				 return microserviceClientProxy.findClientByGSM(gsm);
+			 }
+			 
+			 @GetMapping("/client/findcin/{cin}")
+			    public ResponseEntity<ClientBean> findClientByCin(@PathVariable("cin") String cin){
+				 return microserviceClientProxy.findClientByCin(cin);
+			 }
+			 @PostMapping("/compte/add")
+			    public ResponseEntity<CompteBean> addCompte(@RequestBody CompteBean compte){
+				 return microserviceCompteProxy.addCompte(compte);
+			 }
+			 
+			 @GetMapping("/compte/find/client/{nomClient}")
+			    public ResponseEntity<CompteBean> findCompteByNomClient(@PathVariable("nomClient") String nomClient) {
+				return microserviceCompteProxy.findCompteByNomClient(nomClient);
+			}
+			    @GetMapping("/compte/getBackoffice")
+			    public ResponseEntity<CompteBean> findCompteByNom(){
+			    	return microserviceCompteProxy.findCompteByNom();
+			    }
+			    
+			    @PutMapping("/compte/debiter/{id}/{solde}")
+			    public ResponseEntity<CompteBean> updateCompte(@PathVariable("id") Long id,@PathVariable("solde") float solde){
+					return microserviceCompteProxy.updateCompte(id, solde);
+			    	
+			    }
+			    @PutMapping("/compte/crediter/{id}/{solde}")
+			    public ResponseEntity<CompteBean> crediterCompte(@PathVariable("id") Long id,@PathVariable("solde") float solde){
+					return microserviceCompteProxy.crediterCompte(id, solde);
+			    	
+			    }
+			    
+			    @PutMapping("/compte/updateSolde/{nomClient}")
+				public ResponseEntity<CompteBean> updateSolde(@PathVariable("nomClient") String nomClient,@RequestParam(required = true) float solde){
+			    	return microserviceCompteProxy.updateSolde(nomClient, solde);
+			    }
+			    @PostMapping("/notification/send")
+			    public void sendSms(@Valid @RequestBody NotificationBean smsRequest) {
+
 			    }
 }

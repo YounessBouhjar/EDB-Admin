@@ -10,26 +10,26 @@ import com.example.admin.beans.AgentBean;
 
 import java.util.List;
 
-@FeignClient(name = "agent-service",url = "localhost:8091/agent")
+@FeignClient(name = "agent-service")
 public interface MicroserviceAgentProxy{
-    @GetMapping("/all")
+    @GetMapping("/agent/all")
     ResponseEntity<List<AgentBean>> getAllAgent ();
     
     @GetMapping("/agent/{email}")
     ResponseEntity<AgentBean> getAgentByEmail (@PathVariable("email") String email);
     
-    @GetMapping("/agentid/{id}")
+    @GetMapping("/agent/agentid/{id}")
     ResponseEntity<AgentBean> getAgentById (@PathVariable("id") Long id);
     
     
-    @PutMapping("/update/{id}")
+    @PutMapping("/agent/update/{id}")
     ResponseEntity<AgentBean> updateAgent(@PathVariable("id") Long id,@RequestBody AgentBean agent);
     
     //add compte from agent
-    @PostMapping("/add")
+    @PostMapping("/agent/add")
     ResponseEntity<AgentBean> addAgent(@RequestBody AgentBean agent);
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/agent/delete/{id}")
     ResponseEntity<AgentBean> deleteAgent(@PathVariable("id") Long id);
     
     
