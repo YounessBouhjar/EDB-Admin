@@ -25,7 +25,7 @@ import com.example.admin.proxies.MicroserviceClientProxy;
 import com.example.admin.proxies.MicroserviceCompteProxy;
 import com.example.admin.proxies.MicroserviceNotificationProxy;
 import com.example.admin.proxies.MicroserviceTransfertProxy;
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 
 @RestController
 @RequestMapping("/admin")
@@ -96,10 +96,10 @@ public class AdminController {
 		    ResponseEntity<AgentBean> getAgentById (@PathVariable("id") Long id){
 		        return microserviceAgentProxy.getAgentById(id);
 		    }
-			@PutMapping("/agent/update/{id}")
-		    ResponseEntity<AgentBean> updateAgent(@PathVariable("id") Long id,@RequestBody AgentBean agent){
-		        return microserviceAgentProxy.updateAgent(id,agent);
-		    }
+			 @PutMapping("/agent/update")
+			    public ResponseEntity<?> update( @RequestBody AgentBean agent){
+				 return microserviceAgentProxy.update(agent);
+			 }
 			@PostMapping("/agent/add")
 		    ResponseEntity<AgentBean> addAgent(@RequestBody AgentBean agent){
 		        return microserviceAgentProxy.addAgent(agent);
@@ -157,13 +157,13 @@ public class AdminController {
 //			 }
 			 @PostMapping("/transfert/tranSearch")
 			    public ResponseEntity<List<TransfertBean>> getTransCrit (    		
-			    		@RequestParam(required = false) Long idAgent,
+			    		@RequestParam(required = false) Long idAdmin,
 			    		@RequestParam(required = false) Long idClient,
 			    		@RequestParam(required = false) String pi,
 			    		@RequestParam(required = false) String numGsm,
 			    		@RequestParam(required = false) String codeTransfert,
 			    		@RequestParam(required = false) String status){
-			    return microserviceTransfertProxy.getTransCrit(idAgent, idClient, pi, numGsm, codeTransfert, status);
+			    return microserviceTransfertProxy.getTransCrit(idAdmin, idClient, pi, numGsm, codeTransfert, status);
 			 }
 //			 @GetMapping("/transferts/export/excel")
 //			    public ResponseEntity<List<TransfertBean>> exportToExcel(HttpServletResponse response,    		
@@ -252,11 +252,26 @@ public class AdminController {
 				    return new ResponseEntity<Admin>(admin,HttpStatus.OK);
 				}
 				
-				@PutMapping("/update/{id}")
-				public ResponseEntity<Admin> updateAdmin(@PathVariable Long id ,@RequestBody Admin admin) throws Exception {
-					Admin updateAdmin = service.updateAgent(id,admin);
-				    return new ResponseEntity<Admin>(updateAdmin, HttpStatus.OK);
+				
+				@PutMapping("/updateadmin/{id}")
+				public void updateAdmin(@PathVariable Long id , @RequestBody(required=false) Admin admin) throws DuplicatedException
+				{
+					service.updateAdmin(admin);
 				}
+				
+//				public Admin> updateAdmin(@PathVariable Long id ,@RequestBody Admin admin) throws Exception {
+//					Admin updateAdmin = service.updateAdmin(id,admin);
+//				    return new ResponseEntity<Admin>(updateAdmin, HttpStatus.OK);
+//				}
+				@PutMapping("/update")
+			    public ResponseEntity<?> update(@Valid @RequestBody Admin admin) throws Exception {
+			        if (admin == null)
+			            return ResponseEntity.badRequest().body("The provided movie is not valid");
+			        return ResponseEntity
+			                .ok()
+			                .body(service.updateAdmin(admin));
+			    }
+
 				
 				@DeleteMapping("/delete/{id}")
 				public ResponseEntity<Admin> deleteAdmin(@PathVariable("id") Long id) throws Exception{

@@ -17,6 +17,7 @@ import com.example.admin.model.Admin;
 import com.example.admin.repository.AdminRepository;
 
 
+
 @Service
 public class AdminService {
 
@@ -73,19 +74,15 @@ public class AdminService {
 
 
     
-    public Admin updateAgent(Long id,Admin admin) throws NotFoundException, DuplicatedException
-	{
-		Admin updated = rep.findById(id).orElseThrow(() -> new NotFoundException("Aucun admin avec l'id "+id+" trouvé"));
-		
-		if(rep.findByEmail(admin.getEmail()) != null) throw new DuplicatedException(" Admin existe deja");
 
-		return rep.save(updated);
-
-	}
-	
-	
-	
-	
+    
+    public Admin updateAdmin(Admin admin) throws NotFoundException {
+    	Admin adminFromDB = rep.findById(admin.getId()).orElse(null);
+        if (adminFromDB == null)
+            throw new NotFoundException(admin.getId());
+        admin.setId(adminFromDB.getId());
+        return rep.save(admin);
+    }
 
 
 }

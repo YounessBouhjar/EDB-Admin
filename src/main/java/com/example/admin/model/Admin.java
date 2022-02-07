@@ -15,4 +15,8 @@ public class Admin {
 	String password;
 	String email;
 	String role;
+	public boolean isPresent() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -98,11 +98,8 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				"user-agent",
 				"x-csrftoken",
 				"x-requested-with","Access-Control-Allow-Headers", "Accept", "X-Requested-With", "remember-me"));
-		// setAllowCredentials(true) is important, otherwise:
-		// The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'.
 		configuration.setAllowCredentials(true);
-		// setAllowedHeaders is important! Without it, OPTIONS preflight request
-		// will fail with 403 Invalid CORS request
+
 		configuration.setAllowedHeaders(ImmutableList.of("Authorization", "Cache-Control", "Content-Type"));
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
@@ -122,10 +119,12 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers(HttpMethod.GET,"/admin/username/{username}").permitAll()			//admin par username
 			.antMatchers(HttpMethod.POST,"/admin/add").permitAll()			//creer les admins
 			.antMatchers(HttpMethod.GET,"/admin/agent/all").permitAll()			//creer les admins
-			
+			.antMatchers("/admin").permitAll() 		//agent par username
+
 			.antMatchers(HttpMethod.GET,"/admin/adminid/{id}").permitAll()			//creer les admins
-			.antMatchers(HttpMethod.PUT,"/admin/update/{id}").permitAll()			//creer les admins
+			.antMatchers(HttpMethod.PUT,"/admin/updateadmin/{id}").permitAll()			//creer les admins
 			.antMatchers(HttpMethod.DELETE,"/admin/delete/{id}").permitAll()			//creer les admins
+			.antMatchers(HttpMethod.PUT,"/admin/update").permitAll()			//creer les admins
 
 
 			.and()

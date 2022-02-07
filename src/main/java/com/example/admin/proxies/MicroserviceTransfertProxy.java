@@ -38,7 +38,7 @@ public interface MicroserviceTransfertProxy{
 //    
     @PostMapping("/transfert/tranSearch")
     public ResponseEntity<List<TransfertBean>> getTransCrit (    		
-    		@RequestParam(required = false) Long idAgent,
+    		@RequestParam(required = false) Long idAdmin,
     		@RequestParam(required = false) Long idClient,
     		@RequestParam(required = false) String pi,
     		@RequestParam(required = false) String numGsm,
