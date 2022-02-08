@@ -16,6 +16,6 @@ eureka:
     register-zith-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: https://edb-config.herokuapp.com/eureka
+      defaultZone: https://edb-server.herokuapp.com/eureka
   instance:
     preferIpAddress: true
