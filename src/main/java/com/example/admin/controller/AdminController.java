@@ -25,12 +25,14 @@ import com.example.admin.proxies.MicroserviceClientProxy;
 import com.example.admin.proxies.MicroserviceCompteProxy;
 import com.example.admin.proxies.MicroserviceNotificationProxy;
 import com.example.admin.proxies.MicroserviceTransfertProxy;
-@CrossOrigin(origins = "*")
+
 
 @RestController
 @RequestMapping("/admin")
 
+@CrossOrigin(allowCredentials = "true",  originPatterns = "*")
 public class AdminController {
+	
 	@Autowired
 	MicroserviceAgentProxy microserviceAgentProxy;
 	@Autowired
@@ -66,7 +68,6 @@ public class AdminController {
 			{	
 				return service.getAdmins();
 			}
-			
 			
 			@GetMapping("/username/{username}")
 			@ResponseStatus(HttpStatus.OK)

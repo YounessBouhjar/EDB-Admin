@@ -8,13 +8,16 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
@@ -22,7 +25,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.example.admin.exceptions.DuplicatedException;
@@ -81,7 +86,6 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		return provider;
 	}
 	
-	
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		final CorsConfiguration configuration = new CorsConfiguration();
@@ -92,53 +96,47 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				"accept-encoding",
 				"authorization",
 				"content-type",
-				"Access-Control-Allow-Origin",
 				"dnt",
 				"origin",
 				"user-agent",
 				"x-csrftoken",
-				"x-requested-with","Access-Control-Allow-Headers", "Accept", "X-Requested-With", "remember-me"));
+				"x-requested-with"));
+		// setAllowCredentials(true) is important, otherwise:
+		// The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'.
 		configuration.setAllowCredentials(true);
-
+		// setAllowedHeaders is important! Without it, OPTIONS preflight request
+		// will fail with 403 Invalid CORS request
 		configuration.setAllowedHeaders(ImmutableList.of("Authorization", "Cache-Control", "Content-Type"));
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
+		source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
 		return source;
-	}
+	
 
+        
+
+
+
+    }
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin().defaultSuccessUrl("/", true);
-
+		
 		http
 			.cors()
 			.and()
 			.authorizeRequests()
-			//ADMIN
-			.antMatchers(HttpMethod.GET,"/admin/all").permitAll()		//afficher les admins
-			.antMatchers(HttpMethod.GET,"/admin/username/{username}").permitAll()			//admin par username
-			.antMatchers(HttpMethod.POST,"/admin/add").permitAll()			//creer les admins
-			.antMatchers(HttpMethod.GET,"/admin/agent/all").permitAll()			//creer les admins
-			.antMatchers("/admin").permitAll() 		//agent par username
-
-			.antMatchers(HttpMethod.GET,"/admin/adminid/{id}").permitAll()			//creer les admins
-			.antMatchers(HttpMethod.PUT,"/admin/updateadmin/{id}").permitAll()			//creer les admins
-			.antMatchers(HttpMethod.DELETE,"/admin/delete/{id}").permitAll()			//creer les admins
-			.antMatchers(HttpMethod.PUT,"/admin/update").permitAll()			//creer les admins
-
-
+			
+			.antMatchers("/admin/delete/{id}").permitAll()
 			.and()
 			.httpBasic()
 			.and()
-			.csrf().disable()
+			.csrf().disable();
+		http.cors().disable()
 			;
 			
 		
 		
 		super.configure(http);
 	}
-	
-	
-	
 
 }
