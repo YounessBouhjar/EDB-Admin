@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: admin-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/soukainabouzayan/mircroservices-springboot.git
+          default-label: main
+          clone-on-start: true
+          force-pull: true
+          searchPaths: myapp
+
+eureka:
+  client:
+    register-zith-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: https://edb-config.herokuapp.com
+  instance:
+    preferIpAddress: true
