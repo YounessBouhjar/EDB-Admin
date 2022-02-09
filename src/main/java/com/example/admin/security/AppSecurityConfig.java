@@ -89,7 +89,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		final CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(ImmutableList.of("*"));
+		configuration.setAllowedOrigins(ImmutableList.of("https://edb-admin.herokuapp.com"));
 		configuration.setAllowedMethods(ImmutableList.of("HEAD",
 				"GET", "POST", "PUT", "DELETE", "PATCH"));
 		configuration.setAllowedHeaders(ImmutableList.of("accept",
