@@ -18,6 +18,6 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: https://edb-server.herokuapp.com/eureka
+      defaultZone: https://edb-server.herokuapp.com/eureka/
   instance:
     preferIpAddress: true
