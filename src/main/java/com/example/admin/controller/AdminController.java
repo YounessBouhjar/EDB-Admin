@@ -30,9 +30,8 @@ import com.example.admin.proxies.MicroserviceTransfertProxy;
 @RestController
 @RequestMapping("/admin")
 
-@CrossOrigin(allowCredentials = "true",  originPatterns = "*")
+@CrossOrigin
 public class AdminController {
-	
 	@Autowired
 	MicroserviceAgentProxy microserviceAgentProxy;
 	@Autowired
