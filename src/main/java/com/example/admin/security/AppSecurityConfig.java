@@ -89,7 +89,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		final CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(ImmutableList.of("https://edb-admin.herokuapp.com"));
+		configuration.setAllowedOrigins(ImmutableList.of("http://localhost:4200"));
 		configuration.setAllowedMethods(ImmutableList.of("HEAD",
 				"GET", "POST", "PUT", "DELETE", "PATCH"));
 		configuration.setAllowedHeaders(ImmutableList.of("accept",
@@ -109,7 +109,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		// will fail with 403 Invalid CORS request
 		configuration.setAllowedHeaders(ImmutableList.of("Authorization","Access-Control-Allow-Origin" ,"Cache-Control", "Content-Type"));
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	
 
